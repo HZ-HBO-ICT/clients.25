@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { Owner} from '../../prisma/types.ts';
+import Express from 'express';
 const prisma: PrismaClient = new PrismaClient();
+const clientsController = Express.Router();
 
 /**
  * Interface for the response object
@@ -16,12 +18,12 @@ interface OwnerResponse {
 }
 
 /**
- * Function to get all people
+ * Route handling getting all owners
  * @param req {Request} - The Request object
  * @param res {Response} - The Response object
  * @returns {Promise<void>}
  */
-export async function getOwners(req: Request, res: Response): Promise<void> {
+clientsController.get('/', async (req, res) => {
   try {
     const owners: Owner[] = await prisma.owner.findMany();
     const ownerResponse: OwnerResponse = {
@@ -42,15 +44,15 @@ export async function getOwners(req: Request, res: Response): Promise<void> {
       }
     });
   }
-}
+})
 
 /**
- * Function to get a person by id
+ * Route handling getting owner by id request
  * @param req {Request} - The Request object
  * @param res {Response} - The Response object
  * @returns {Promise<void>}
  */
-export async function getOwner(req: Request, res: Response): Promise<void> {
+clientsController.get('/:id', async (req, res) => {
   try {
     const id: number = parseInt(req.params.id);
     if (isNaN(id)) {
@@ -86,4 +88,6 @@ export async function getOwner(req: Request, res: Response): Promise<void> {
       }
     });
   }
-}
+})
+
+export default clientsController;
